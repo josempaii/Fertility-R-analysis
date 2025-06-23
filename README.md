@@ -6,8 +6,6 @@ Fertility eurostat page (Base project off this report): https://ec.europa.eu/eur
 
 Total fertility rate eurostat database: https://ec.europa.eu/eurostat/databrowser/view/tps00199/default/table?lang=en
 
-https://ec.europa.eu/eurostat/web/products-eurostat-news/-/ddn-20210224-1
-
 https://pmc.ncbi.nlm.nih.gov/articles/PMC3000017/
 
 https://www.bbc.com/news/articles/clynq459wxgo
