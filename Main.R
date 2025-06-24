@@ -189,7 +189,6 @@ for (current_region in regions_to_plot) {
   message(paste0("Bar chart SAVED as '", file_name, "' for ", current_region))
 }
 
-
 # --- Step 5: Create Maps Showing Fertility Rate (2018 vs 2023) ---
 
 # Apply map-specific modifications to data (re-coding only EL to GR)
@@ -254,3 +253,49 @@ ggplot(map_data_final %>% filter(Year %in% c(2018, 2023)),
 
 # Save the map plot
 ggsave("europe_fertility_map_2018_2023_final.png", width = 12, height = 8, dpi = 300)
+
+# --- Step 6: Line Charts ---
+
+# Use all available years
+line_data <- euro_demographics_final %>%
+  group_by(Region, Year) %>%
+  summarise(
+    Avg_Fertility = mean(Total_Fertility_Rate, na.rm = TRUE),
+    Avg_Age = mean(Age_First_Child, na.rm = TRUE),
+    .groups = 'drop'
+  )
+
+# Fertility Rate Plot
+p1 <- ggplot(line_data, aes(x = Year, y = Avg_Fertility, color = Region)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +
+  geom_vline(xintercept = 2020, color = "red", linetype = "dashed", size = 1) +
+  annotate("text", x = 2020.2, y = max(line_data$Avg_Fertility, na.rm = TRUE), 
+           label = "COVID-19", color = "red", angle = 90, vjust = -0.5, size = 3) +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 10)) +
+  scale_color_manual(values = c("Northern Europe" = "#2E8B57", 
+                                "Southern Europe" = "#FF6347", 
+                                "Central/Eastern Europe" = "#4682B4")) +
+  labs(title = "Total Fertility Rate Over Time", x = "Year", y = "Total Fertility Rate") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+# Age of Fertility Plot
+p2 <- ggplot(line_data, aes(x = Year, y = Avg_Age, color = Region)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 3) +
+  geom_vline(xintercept = 2020, color = "red", linetype = "dashed", size = 1) +
+  annotate("text", x = 2020.2, y = max(line_data$Avg_Age, na.rm = TRUE), 
+           label = "COVID-19", color = "red", angle = 90, vjust = -0.5, size = 3) +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 10)) +
+  scale_color_manual(values = c("Northern Europe" = "#2E8B57", 
+                                "Southern Europe" = "#FF6347", 
+                                "Central/Eastern Europe" = "#4682B4")) +
+  labs(title = "Age at First Child Over Time", x = "Year", y = "Age at First Child") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+
+print(p1)
+print(p2)
+ggsave("fertility_rate_trends.png", p1, width = 10, height = 6, dpi = 300)
+ggsave("age_first_child_trends.png", p2, width = 10, height = 6, dpi = 300)
